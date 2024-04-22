@@ -12,11 +12,12 @@ import { IncrementContext } from "./AppContext";
 // }
 const HeaderComponent = ()=>{
   console.log("Header Component");
-  const {state,dispatch} = useContext(IncrementContext);
+  const {counter} = useContext(IncrementContext);
+  
   
   return(
-    <header>
-        <p>State value {state._count}</p>
+      <header className="flex justify-center my-5">
+        <p className="p-5 bg-orange-300 text-white">State value {counter._count}</p>
       </header>
   )
 }

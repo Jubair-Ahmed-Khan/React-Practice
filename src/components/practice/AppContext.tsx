@@ -3,69 +3,67 @@ import React, { FC, ReactNode, useState, createContext, useReducer, Dispatch } f
 // import { createContext } from "vm";
 
 
-/*interface IncrementCOntext {
-  stateVal:number,
-  setStateVal: (param:number)=>void
+
+// interface IncrementCOntext {
+//   stateVal:number,
+//   setStateVal: (param:number)=>void,
+
+// }
+
+interface stateModel{
+  _count:number;
 }
 
-export const IncrementContext = createContext<IncrementCOntext>({
-  
-  stateVal:0,
-  setStateVal: (param:number)=>{}
-  
-});*/
-
-interface CounterState {
-  count: number;
+interface actionModel{
+  type:"INCREMENT" | "DECREMENT" | "RESET",
+  value: string | number
 }
 
-type CounterAction = 
-  | { type: 'INCREMENT' }
-  | { type: 'DECREMENT' };
+interface IncrementCOntext {
+  counter:stateModel,
+  counterDispatch:Dispatch<actionModel>
+}
 
-
-const counterReducer=(state: CounterState, action: CounterAction): CounterState =>{
+const counterReducer=(state: stateModel, action: actionModel): stateModel =>{
   switch (action.type) {
     case 'INCREMENT':
-        return { count: state.count + 1 };
+      return { ...state,_count:+action.value + 1 as number };
     case 'DECREMENT':
-      if(state.count>0)
-        return { count: state.count - 1 };
+      if(+action.value>0)
+        return { ...state,_count:+action.value - 1 as number };
       else
-        return { count: 0 };
+        return { ...state,_count:0 as number };
+    case 'RESET':
+      return { ...state,_count:0 as number };
     default:
         return state;
+  }
 }
-}
-
-export const IncrementContext = createContext<{
-  state: CounterState;
-  dispatch: Dispatch<CounterAction>;
-} | undefined>(undefined);
-
 
 // export const IncrementContext = createContext<IncrementCOntext>({
-//   _count:0,
+//  stateVal:0,
+//   setStateVal: (param:number)=>{},
 // });
 
+export const IncrementContext = createContext<IncrementCOntext>({
+  counter:{_count:0},
+  counterDispatch: ()=>{}
+});
 
 
 const AppContextComponent :FC<{children:ReactNode}>= ({children})=>{
 
   // const [stateVal,setStateVal] = useState<number>(0);
-  const [state, dispatch] = useReducer(counterReducer, { count: 0 });
+  const [counter, counterDispatch] = useReducer(counterReducer, { _count: 0 });
 
-  
-  
   return (
-    // <IncrementContext.Provider value={{stateVal,setStateVal}}>
+     // <IncrementContext.Provider value={{stateVal,setStateVal}}>
     //   {children}
     // </IncrementContext.Provider>
-    <IncrementContext.Provider value={{state,dispatch}}>
+    <IncrementContext.Provider value={{counter,counterDispatch}}>
       {children}
     </IncrementContext.Provider>
   )
-
 }
 
 export default AppContextComponent;
